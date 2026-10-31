@@ -1,0 +1,17 @@
+[
+  ".gitignore",
+  "README.md",
+  "VERSION",
+  "package-files.json",
+  "skills/assessment-workflow/SKILL.md",
+  "skills/assessment-workflow/agents/openai.yaml",
+  "skills/assessment-workflow/assets/EVIDENCE.md",
+  "skills/assessment-workflow/assets/PLAN.md",
+  "skills/assessment-workflow/assets/QUESTIONS.md",
+  "skills/assessment-workflow/references/manual-questions.md",
+  "skills/assessment-workflow/references/retrospective.md",
+  "skills/assessment-workflow/references/verification.md",
+  "tests/BEHAVIOR.md",
+  "tests/test_package.py",
+  "tools/manage.py"
+]
