@@ -1,4 +1,4 @@
 interface:
-  display_name: "Cofa 과제 가이드"
-  short_description: "짧게 시작하고 사용자 기록을 다시 읽어 단계별 다음 행동을 안내합니다"
+  display_name: "Cofa 프롬프트 코치"
+  short_description: "단계별 요청의 이유와 초안을 제안하고 사용자가 판단할 부분을 안내합니다"
   default_prompt: "$assessment-workflow 시작"
