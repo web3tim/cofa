@@ -1,4 +1,4 @@
 interface:
-  display_name: "과제 접근 방법론"
-  short_description: "자료 해석부터 수동 질의, 실행 검증까지 과제 접근을 안내합니다"
-  default_prompt: "Use $assessment-workflow to guide this task and prepare questions I can manually ask the stakeholder."
+  display_name: "Cofa 과제 가이드"
+  short_description: "짧게 시작하고 사용자 기록을 다시 읽어 단계별 다음 행동을 안내합니다"
+  default_prompt: "$assessment-workflow 시작"

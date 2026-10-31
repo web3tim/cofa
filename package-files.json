@@ -11,6 +11,7 @@
   "skills/assessment-workflow/references/manual-questions.md",
   "skills/assessment-workflow/references/retrospective.md",
   "skills/assessment-workflow/references/verification.md",
+  "skills/assessment-workflow/references/workflow.md",
   "tests/BEHAVIOR.md",
   "tests/test_package.py",
   "tools/manage.py"
