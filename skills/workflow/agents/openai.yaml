@@ -1,4 +1,0 @@
-interface:
-  display_name: "workflow"
-  short_description: "다음 프롬프트와 선택형 실험·이해 확인·직접 검증·답변 연습을 안내합니다"
-  default_prompt: "$workflow 시작"
