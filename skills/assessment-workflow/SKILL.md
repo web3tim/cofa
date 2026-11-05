@@ -1,6 +1,6 @@
 ---
 name: assessment-workflow
-description: Use when a user needs guidance on prompts and next steps for a bounded task with supplied materials, uncertain requirements, or manually recorded stakeholder replies.
+description: Use when guiding a bounded task from supplied materials and uncertain requirements, with next-prompt coaching, evidence-based choices and practice, and manually recorded stakeholder replies.
 ---
 
 # 과제 접근 방법론
@@ -19,7 +19,7 @@ description: Use when a user needs guidance on prompts and next steps for a boun
 | 사용자 요청 | 바로 수행할 일 |
 |---|---|
 | 시작 / cofa 시작 | 현재 작업폴더와 기존 기록을 확인하고 첫 단계 또는 중단 지점 안내 |
-| 기록했어 / 답변 적었어 | 알려진 질문 기록 파일을 다시 읽고 새 내용·수정 내용을 검토해 반영 |
+| 기록했어 / 답변 적었어 | 현재 활동의 알려진 사용자 기록 파일을 다시 읽고 새 내용·수정 내용을 검토해 반영 |
 | 계속 / 이어서 | 저장한 상태와 실제 파일을 대조하고 허용된 다음 작업 수행 |
 | 구현해 | 현재 과제 범위의 구현 요청으로 기록하고 미확정 업무 조건을 분리해 실행 |
 | 검증해 | 현재 결과와 관련 조건을 읽고 실행 가능한 검사를 수행 |
@@ -27,6 +27,10 @@ description: Use when a user needs guidance on prompts and next steps for a boun
 | 어디까지 했어? | 현재 단계, 확인 결과, 막힌 부분, 다음 행동을 간결하게 설명 |
 | 프롬프트 도와줘 | 현재 자료·결과에 맞는 다음 요청의 목적·초안·판단할 부분 제시 |
 | 내 프롬프트 검토해줘 | 사용자가 쓴 요청의 의도를 보존하며 빠진 근거·범위·확인 방법을 짚고 수정안 제시 |
+| 실험해 / 방법 비교해줘 | 선택형 실험 절차로 기준선·가설·비교와 사용자 판단·재검증 안내 |
+| 내 설명 확인해줘 | 실제 근거와 대조해 사실 오류·누락·미확인 부분만 피드백 |
+| 직접 확인할게 | 사용자가 고를 확인 항목과 기대 결과·관찰 방법 안내 |
+| 답변 연습하자 | 실제 기록에 근거한 질문부터 제시하고 사용자의 답을 검토 |
 
 스킬이 아직 로드되지 않은 CLI에서 이 문구만으로 자동 발견된다고 약속하지 않는다.
 현재 폴더·기록으로 과제를 식별할 수 없을 때만 필요한 위치를 한 번 묻는다.
@@ -71,6 +75,21 @@ CLI는 사용자 작성 영역을 채우거나 고쳐 쓰지 않고 별도 CLI �
 검사 시 [검증 지침](references/verification.md), 인계 시 [결과 전달 지침](references/retrospective.md)을 읽는다.
 검사 작성·실행·결과 확인·미검증 범위를 구분한다. 실제 결과 위치와 적용한 조건을 남긴다.
 문서나 코드의 존재만으로 완료를 주장하지 않는다. 사용자·담당자·AI·도구의 기여를 구분한다.
+
+## 필요할 때 선택하는 절차
+
+- 방법의 비교가 중요한 판단을 바꿀 때 [실험 절차](references/experiments.md)를 읽는다.
+  기준선 → 가설 → 비교 → 사용자 판단 → 재검증을 연결하고 채택 전 후보와 현재 결과를 구분한다.
+- 중요한 결정·구현을 자기 말로 설명하거나 사후 답변을 연습할 때
+  [이해 확인과 답변 연습](references/understanding.md)을 읽는다.
+  사용자 원문을 보존하고 사실 오류·누락·미확인 부분만 짚는다. 연습 답안을 대신 쓰지 않는다.
+- 사용자가 직접 확인할 때 [검증 지침](references/verification.md)의 사용자 직접 확인 절차를 따른다.
+  항목은 사용자가 고르고 실제 관찰을 받기 전까지 사용자 확인 완료로 표시하지 않는다.
+
+이 절차들은 기본 작업의 의무 단계가 아니다. 요청받거나 필요성을 설명해 사용자가 선택했을 때 적용한다.
+`PLAN.md`에 선택한 활동과 범위를 남기고 기존 기록에는 필요한 항목만 추가한다.
+사용자가 생략하거나 멈춘 활동을 다음 응답마다 다시 강요하지 않는다.
+기존에 허용된 작업은 계속하고, 사용자 판단·답변·관찰에 의존하는 부분만 기다린다.
 
 ## 단계별 안내 형식
 

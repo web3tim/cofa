@@ -76,6 +76,82 @@ class PackageTests(unittest.TestCase):
         self.assertNotEqual(again.returncode, 0)
         self.assertEqual(marker.read_text(), "preserve")
 
+    def test_project_install_preserves_instructions_notes_and_other_skills(self):
+        workspace = self.base / "task with spaces"
+        workspace.mkdir()
+        (workspace / "AGENTS.md").write_bytes(b"existing project instructions\n")
+        (workspace / "task-notes").mkdir()
+        (workspace / "task-notes/QUESTIONS.md").write_bytes(b"human reply\n")
+        other = workspace / ".agents/skills/existing"
+        other.mkdir(parents=True)
+        (other / "SKILL.md").write_bytes(b"existing skill\n")
+        before = {p.relative_to(workspace): p.read_bytes()
+                  for p in workspace.rglob("*") if p.is_file()}
+        result = self.run_tool("install", "--workspace", workspace)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        target = workspace / ".agents/skills/assessment-workflow"
+        self.assertTrue((target / "SKILL.md").is_file())
+        for name, data in before.items():
+            self.assertEqual((workspace / name).read_bytes(), data)
+        snapshot = {p.relative_to(workspace): p.read_bytes()
+                    for p in workspace.rglob("*") if p.is_file()}
+        again = self.run_tool("install", "--workspace", workspace)
+        self.assertNotEqual(again.returncode, 0)
+        self.assertEqual(snapshot, {p.relative_to(workspace): p.read_bytes()
+                                   for p in workspace.rglob("*") if p.is_file()})
+
+    def test_project_install_creates_only_project_skill_files(self):
+        workspace = self.base / "task"
+        workspace.mkdir()
+        result = self.run_tool("install", "--workspace", workspace)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        actual = {str(p.relative_to(workspace)) for p in workspace.rglob("*") if p.is_file()}
+        prefix = "skills/assessment-workflow/"
+        expected = {".agents/" + p for p in json.loads((ROOT / "package-files.json").read_text())
+                    if p.startswith(prefix)}
+        self.assertEqual(actual, expected)
+
+    def test_project_install_rejects_redirected_or_non_directory_parents(self):
+        for relative in (".agents", ".agents/skills"):
+            for kind in ("symlink", "file"):
+                with self.subTest(relative=relative, kind=kind):
+                    workspace = self.base / (relative.replace("/", "-") + kind)
+                    workspace.mkdir()
+                    path = workspace / relative
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    outside = self.base / (workspace.name + "-outside")
+                    outside.mkdir()
+                    if kind == "symlink":
+                        path.symlink_to(outside, target_is_directory=True)
+                    else:
+                        path.write_bytes(b"preserve")
+                    result = self.run_tool("install", "--workspace", workspace)
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertEqual(list(outside.iterdir()), [])
+                    if kind == "file":
+                        self.assertEqual(path.read_bytes(), b"preserve")
+
+    def test_project_install_rejects_symlinked_target(self):
+        workspace = self.base / "task"
+        parent = workspace / ".agents/skills"
+        parent.mkdir(parents=True)
+        outside = self.base / "outside"
+        outside.mkdir()
+        (parent / "assessment-workflow").symlink_to(outside, target_is_directory=True)
+        result = self.run_tool("install", "--workspace", workspace)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(list(outside.iterdir()), [])
+
+    def test_project_install_refuses_missing_workspace_and_distribution(self):
+        missing = self.base / "missing"
+        result = self.run_tool("install", "--workspace", missing)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(missing.exists())
+        copy = self.copied_distribution()
+        result = self.run_copy(copy, "install", "--workspace", copy)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((copy / ".agents").exists())
+
     def test_package_is_allowlisted_reproducible_and_verifiable(self):
         first = self.base / "first.zip"
         second = self.base / "second.zip"
@@ -181,6 +257,11 @@ class PackageTests(unittest.TestCase):
                                 text=True, capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue((workspace / "task-notes/QUESTIONS.md").is_file())
+        result = subprocess.run([sys.executable, str(unpacked / "tools/manage.py"),
+                                 "install", "--workspace", str(workspace)],
+                                text=True, capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue((workspace / ".agents/skills/assessment-workflow/SKILL.md").is_file())
 
 
 if __name__ == "__main__":

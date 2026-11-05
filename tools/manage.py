@@ -51,16 +51,26 @@ def initialize(workspace):
     print("The user manually sends questions and records replies in QUESTIONS.md.")
 
 
-def install(destination):
-    parent = existing_directory(destination)
-    if inside(parent, ROOT):
-        raise ValueError("Choose an installation directory outside this distribution.")
+def install(destination=None, workspace=None):
+    if workspace is not None:
+        project = existing_directory(workspace)
+        if inside(project, ROOT):
+            raise ValueError("Choose a task workspace outside this distribution.")
+        parent = project / ".agents" / "skills"
+        for path in (project / ".agents", parent):
+            if path.is_symlink() or (path.exists() and not path.is_dir()):
+                raise ValueError("Project skill directory must be a real directory: " + str(path))
+    else:
+        parent = existing_directory(destination)
+        if inside(parent, ROOT):
+            raise ValueError("Choose an installation directory outside this distribution.")
     target = fresh_destination(parent, SKILL_NAME)
     _, payloads = package_payloads()
     prefix = "skills/" + SKILL_NAME + "/"
     selected = {name[len(prefix):]: data for name, data in payloads.items() if name.startswith(prefix)}
     if "SKILL.md" not in selected:
         raise ValueError("The allowlist does not contain the skill entrypoint.")
+    parent.mkdir(parents=True, exist_ok=True)
     target.mkdir()
     for relative, data in selected.items():
         output = target / relative
@@ -69,6 +79,7 @@ def install(destination):
             handle.write(data)
     print("Copied skill to: " + str(target))
     print("Native discovery depends on the CLI. Manual SKILL.md reading is also supported.")
+    print("Manual entrypoint: " + str(target / "SKILL.md"))
 
 
 def package_payloads():
@@ -126,8 +137,10 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     init = commands.add_parser("init", help="Copy blank notes into an existing task workspace")
     init.add_argument("--workspace", required=True)
-    install_parser = commands.add_parser("install", help="Copy skill into an existing CLI skills directory")
-    install_parser.add_argument("--destination", required=True)
+    install_parser = commands.add_parser("install", help="Copy skill into a CLI directory or task workspace")
+    location = install_parser.add_mutually_exclusive_group(required=True)
+    location.add_argument("--destination", help="Existing CLI skills directory")
+    location.add_argument("--workspace", help="Existing task folder; installs under .agents/skills")
     pack = commands.add_parser("package", help="Build an allowlisted offline ZIP and checksum")
     pack.add_argument("--output", required=True)
     args = parser.parse_args()
@@ -135,7 +148,7 @@ def main():
         if args.command == "init":
             initialize(args.workspace)
         elif args.command == "install":
-            install(args.destination)
+            install(destination=args.destination, workspace=args.workspace)
         else:
             build_package(args.output)
     except (OSError, ValueError) as error:
