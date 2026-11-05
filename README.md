@@ -1,9 +1,25 @@
 # cofa
 
 짧게 시작하면 다음 요청의 목적·프롬프트 초안·사용자가 판단할 부분을 안내하는 CLI용 과제 접근 스킬입니다.
-스킬 이름은 `assessment-workflow`이며, 방법론과 빈 Markdown 양식만 포함합니다.
+스킬 이름은 `workflow`이며, 방법론과 빈 Markdown 양식만 포함합니다.
 담당자 대화창 연동이나 자동 송수신 기능은 없습니다.
-v0.4.0은 선택형 실험, 이해 확인, 사용자 직접 검증과 답변 연습, 과제 폴더 설치를 지원합니다.
+v0.4.1은 선택형 실험, 이해 확인, 사용자 직접 검증과 답변 연습, 과제 폴더 설치를 지원합니다.
+
+## GitHub에서 바로 설치
+
+Git과 Python 3.8 이상이 있는 터미널에서 **실제 과제 폴더로 이동한 뒤** 아래를 실행합니다.
+공개 저장소에서 v0.4.1을 받아 현재 과제에 설치합니다. GitHub 로그인이나 ZIP 수동 이동은 필요 없습니다.
+다운로드는 별도 임시 폴더에 두고 과제 폴더에는 스킬만 설치합니다.
+
+```sh
+cofa_download_dir="$(mktemp -d "${TMPDIR:-/tmp}/cofa-v0.4.1.XXXXXX")" &&
+git clone --depth 1 --branch v0.4.1 https://github.com/web3tim/cofa.git "$cofa_download_dir" &&
+python3 "$cofa_download_dir/tools/manage.py" install --workspace "$PWD"
+```
+
+설치가 완료되면 같은 과제 폴더에서 CLI를 새로 열고 아래의 짧은 시작 요청을 보냅니다.
+Codex CLI라면 터미널에서 `codex`를 실행한 뒤 `$workflow 시작`을 입력합니다.
+기존 스킬 폴더가 있으면 덮어쓰지 않으므로 먼저 백업한 뒤 교체하세요.
 
 ## 짧게 사용하기
 
@@ -11,7 +27,7 @@ v0.4.0은 선택형 실험, 이해 확인, 사용자 직접 검증과 답변 연
 네이티브 호출 문법을 지원하는 CLI에서는 다음 한 줄로 시작할 수 있습니다.
 
 ```text
-$assessment-workflow 시작
+$workflow 시작
 ```
 
 자동 발견을 지원하지 않으면 최초 한 번만 실제 스킬 경로를 지정합니다.
@@ -114,7 +130,7 @@ CLI는 사용자 작성 영역을 고치지 않습니다. 해석과 반영 상�
 ## 설치와 이동
 
 배포 폴더는 실제 과제 작업폴더와 분리합니다.
-Python 없이도 `skills/assessment-workflow/` 전체를 복사해 SKILL.md를 읽힐 수 있습니다.
+Python 없이도 `skills/workflow/` 전체를 복사해 SKILL.md를 읽힐 수 있습니다.
 참고 문서와 양식의 상대 경로를 보존해야 합니다.
 
 ### 과제 폴더에 설치
@@ -125,13 +141,13 @@ Python 3.8 이상에서 배포 폴더의 도구를 실행하고 **기존 과제 
 python3 tools/manage.py install --workspace '/path/to/current-task'
 ```
 
-해당 과제의 `.agents/skills/assessment-workflow/` 안에 스킬만 설치합니다.
+해당 과제의 `.agents/skills/workflow/` 안에 스킬만 설치합니다.
 홈 폴더 설정, 기존 `AGENTS.md`, 다른 스킬과 과제 기록은 변경하지 않습니다.
-과제 폴더에서 CLI의 새 세션을 열고 `$assessment-workflow 시작`으로 불러옵니다.
+과제 폴더에서 CLI의 새 세션을 열고 `$workflow 시작`으로 불러옵니다.
 이 경로의 자동 발견을 지원하지 않는 CLI에서는 최초 한 번 다음처럼 직접 읽힙니다.
 
 ```text
-/path/to/current-task/.agents/skills/assessment-workflow/SKILL.md를 읽고 시작해줘.
+/path/to/current-task/.agents/skills/workflow/SKILL.md를 읽고 시작해줘.
 ```
 
 기록은 첫 시작에 기존 내용을 확인한 뒤 준비합니다. 설치 자체가 기록을 초기화하지는 않습니다.
@@ -153,6 +169,9 @@ python3 tools/manage.py install --destination '/path/to/cli-skills'
 
 ### 이전 버전에서 이어가기
 
+v0.4.1부터 스킬 이름과 설치 폴더는 `workflow`입니다.
+기존 `assessment-workflow` 설치본이 있다면 자동 발견되는 스킬 폴더 밖에 백업한 뒤 새 이름으로 설치하세요.
+설치 도구는 이전 이름의 폴더를 자동으로 삭제하거나 이동하지 않습니다.
 기존 `PLAN.md`, `QUESTIONS.md`, `EVIDENCE.md`는 그대로 읽습니다.
 새 활동을 사용할 때 필요한 기록 항목만 추가하며 양식 전체를 교체하지 않습니다.
 같은 이름의 전역·프로젝트 스킬이 함께 있다면 실제로 읽힌 `SKILL.md` 경로를 확인하세요.
@@ -181,7 +200,7 @@ python3 tools/manage.py init --workspace '/path/to/current-task'
 
 ```sh
 python3 -m unittest discover -s tests -v
-python3 tools/manage.py package --output '/path/to/output/cofa-0.4.0.zip'
+python3 tools/manage.py package --output '/path/to/output/cofa-0.4.1.zip'
 ```
 
 출력 부모 폴더는 미리 존재해야 합니다. ZIP과 체크섬 파일은 덮어쓰지 않습니다.

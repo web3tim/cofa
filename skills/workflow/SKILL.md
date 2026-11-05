@@ -1,5 +1,5 @@
 ---
-name: assessment-workflow
+name: workflow
 description: Use when guiding a bounded task from supplied materials and uncertain requirements, with next-prompt coaching, evidence-based choices and practice, and manually recorded stakeholder replies.
 ---
 

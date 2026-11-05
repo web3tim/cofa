@@ -9,7 +9,7 @@ import sys
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL_NAME = "assessment-workflow"
+SKILL_NAME = "workflow"
 SKILL = ROOT / "skills" / SKILL_NAME
 NOTES = ("PLAN.md", "QUESTIONS.md", "EVIDENCE.md")
 

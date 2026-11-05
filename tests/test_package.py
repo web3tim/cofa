@@ -67,7 +67,7 @@ class PackageTests(unittest.TestCase):
         destination.mkdir()
         result = self.run_tool("install", "--destination", destination)
         self.assertEqual(result.returncode, 0, result.stderr)
-        skill = destination / "assessment-workflow"
+        skill = destination / "workflow"
         self.assertTrue((skill / "SKILL.md").is_file())
         self.assertTrue((skill / "references" / "manual-questions.md").is_file())
         marker = skill / "human-note.txt"
@@ -89,7 +89,7 @@ class PackageTests(unittest.TestCase):
                   for p in workspace.rglob("*") if p.is_file()}
         result = self.run_tool("install", "--workspace", workspace)
         self.assertEqual(result.returncode, 0, result.stderr)
-        target = workspace / ".agents/skills/assessment-workflow"
+        target = workspace / ".agents/skills/workflow"
         self.assertTrue((target / "SKILL.md").is_file())
         for name, data in before.items():
             self.assertEqual((workspace / name).read_bytes(), data)
@@ -106,7 +106,7 @@ class PackageTests(unittest.TestCase):
         result = self.run_tool("install", "--workspace", workspace)
         self.assertEqual(result.returncode, 0, result.stderr)
         actual = {str(p.relative_to(workspace)) for p in workspace.rglob("*") if p.is_file()}
-        prefix = "skills/assessment-workflow/"
+        prefix = "skills/workflow/"
         expected = {".agents/" + p for p in json.loads((ROOT / "package-files.json").read_text())
                     if p.startswith(prefix)}
         self.assertEqual(actual, expected)
@@ -137,7 +137,7 @@ class PackageTests(unittest.TestCase):
         parent.mkdir(parents=True)
         outside = self.base / "outside"
         outside.mkdir()
-        (parent / "assessment-workflow").symlink_to(outside, target_is_directory=True)
+        (parent / "workflow").symlink_to(outside, target_is_directory=True)
         result = self.run_tool("install", "--workspace", workspace)
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(list(outside.iterdir()), [])
@@ -189,12 +189,12 @@ class PackageTests(unittest.TestCase):
 
     def test_install_excludes_unlisted_files_inside_skill(self):
         copy = self.copied_distribution()
-        (copy / "skills/assessment-workflow/private-task.txt").write_text("local-only")
+        (copy / "skills/workflow/private-task.txt").write_text("local-only")
         destination = self.base / "skills"
         destination.mkdir()
         result = self.run_copy(copy, "install", "--destination", destination)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertFalse((destination / "assessment-workflow/private-task.txt").exists())
+        self.assertFalse((destination / "workflow/private-task.txt").exists())
 
     def test_package_excludes_unlisted_notes_and_environment(self):
         copy = self.copied_distribution()
@@ -261,7 +261,7 @@ class PackageTests(unittest.TestCase):
                                  "install", "--workspace", str(workspace)],
                                 text=True, capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertTrue((workspace / ".agents/skills/assessment-workflow/SKILL.md").is_file())
+        self.assertTrue((workspace / ".agents/skills/workflow/SKILL.md").is_file())
 
 
 if __name__ == "__main__":
